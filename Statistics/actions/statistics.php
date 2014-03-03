@@ -39,9 +39,10 @@ class StatisticsAction extends Action
             $stats["users_count"] = $user->COUNT(id);
         }
         
-        # Add all users logins and fullnames.
+        # Add all users logins and fullnames, ignoring
+        # private-streamed guys.
         $user = new User();
-        $user->query("SELECT id, nickname, fullname FROM profile WHERE profileurl LIKE \"%" . $stats["instance_address"] . "%\" and profileurl NOT LIKE \"%group%\";");
+        $user->query("SELECT user.id, user.nickname, profile.fullname FROM user JOIN profile ON profile.id=user.id WHERE user.private_stream=0;");
         while ($user->fetch())
         {
             $stats["users"][$user->nickname] = array(
